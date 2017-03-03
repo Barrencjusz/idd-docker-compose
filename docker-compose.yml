@@ -1,12 +1,29 @@
 version: '3'
 services: 
-    elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
-        networks: 
+    nginx:
+        image: piteron/nginx
+        networks:
             - back
         ports: 
-            - "9200:9200"
-            - "9300:9300"
+            - "80:80"
+    idd-docker:
+        image: piteron/idd-docker:0.0.1-SNAPSHOT
+        networks:
+            - back
+        ports: 
+            - "8081:8080"
+    rest-repository:
+        image: piteron/rest-repository:0.0.1-SNAPSHOT
+        networks:
+            - back
+        depends_on: 
+            - elasticsearch
+        ports: 
+            - "8082:8080"
+    elasticsearch:
+        image: elasticsearch:2-alpine
+        networks: 
+            - back
     logstash:
         image: docker.elastic.co/logstash/logstash:5.2.1
         networks: 
