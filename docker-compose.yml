@@ -24,12 +24,27 @@ services:
         image: elasticsearch:2-alpine
         networks: 
             - back
+        ports: 
+            - "9200:9200"
+            - "9300:9300"
     logstash:
-        image: docker.elastic.co/logstash/logstash:5.2.1
+        image: piteron/logstash:2-alpine
+        networks: 
+            - back
+        ports: 
+            - "5000:5000"
+    logspout-logstash:
+        image: piteron/logspout-logstash
+        depends_on: 
+            - logstash
+        volumes: 
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment: 
+            - ROUTE_URIS=logstash+tcp://logstash:5000
         networks: 
             - back
     kibana:
-        image: docker.elastic.co/kibana/kibana:5.2.1
+        image: kibana:4
         networks: 
             - back
         ports: 
